@@ -1,26 +1,25 @@
-import { Producer } from './Producer';
-import { Consumer } from './Consumer';
+import { Producer } from './Producer'
+import { Consumer } from './Consumer'
 
 const consumerConfig = {
-    getUrl : "http://localhost:3000/get/",
-    deleteUrl : "http://localhost:3000/delete/",
-};
-
-const consumerConfig2 = {
-    getUrl : "http://localhost:3000/get/",
-    deleteUrl : "http://localhost:3000/delete/",
-};
+  getUrl: 'http://localhost:3000/get/',
+  deleteUrl: 'http://localhost:3000/delete/'
+}
+//
+// const consumerConfig2 = {
+//   getUrl: 'http://localhost:3000/get/',
+//   deleteUrl: 'http://localhost:3000/delete/'
+// }
 
 const producerConfig = {
-    url : "http://localhost:3000/add",
-    interval : 2000
-};
+  url: 'http://localhost:3000/add',
+  interval: 1000
+}
 
-console.log(Producer);
-const producer = new Producer(producerConfig);
-producer.init();
-const consumer = new Consumer(consumerConfig);
-consumer.init();
+const producer = new Producer(producerConfig)
+producer.init()
+const consumer = new Consumer(consumerConfig)
+consumer.init()
 
 // setTimeout(()=> {
 //     const consumer2 = new Consumer(consumerConfig2);

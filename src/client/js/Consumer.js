@@ -2,50 +2,58 @@ import axios from 'axios'
 import Util from './util'
 
 export class Consumer {
-    constructor (config = {}) {
-        const {getUrl, deleteUrl } = config
-        this.getUrl = getUrl
-        this.deleteUrl = deleteUrl
-        this.shortId = ''
-        this.messages = []
-        this.processingMessage = false
-    }
+  constructor (config = {}) {
+    const {getUrl, deleteUrl} = config
+    this.getUrl = getUrl
+    this.deleteUrl = deleteUrl
+    this.shortId = ''
+    this.processingMessage = false
+  }
 
-    init() {
-        console.log('Initializing consumer...');
-        // while (!this.processingMessage){
-        //         console.log(this.processingMessage);
-        //         this.getMessage()
-        //         this.processMessage()
-        //         this.deleteProcessingQueue()
-        // }
+  init () {
+    console.log('Initializing consumer...')
+    // while (!this.processingMessage) {
+    //   console.log(this.processingMessage)
+    //   this.getMessages()
+    //   this.deleteProcessingQueue()
+    // }
 
-        setInterval(() => {
-            console.log(this.processingMessage);
-            this.getMessage()
- //           this.deleteProcessingQueue()
-        }, 5000)
-    }
+    setInterval(() => {
+      this.getMessages()
+      this.deleteProcessingQueue()
+    }, 5000)
+  }
 
-    processMessage() {
-        console.log(`Message processing, data: ${JSON.stringify(e.data)}`)
-    }
+  processMessages (data) {
+    console.log(`Message processing`)
+    return data
+  }
 
-    getMessage() {
-        this.processingMessage = true;
-        this.shortId = Util.generateShortUuid();
-        console.log(`Consumer ${this.shortId}: Requesting messages`)
-        return axios.post(this.getUrl + this.shortId)
-            .then((e) => { this.messages = e.data })
-            .catch(err => console.log(`Consumer ${this.shortId}: error getting message ${err}`))
-    }
+  getMessages () {
+    this.processingMessage = true
+    this.shortId = Util.generateShortUuid()
+    console.log(`Consumer ${this.shortId}: Requesting messages`)
 
-    deleteProcessingQueue() {
-        console.log("Send req to delete processing Queue")
-        this.processingMessage = false
-        return axios.post(this.deleteUrl + this.shortId)
-            .then(({data}) => { return data.status })
-            .catch(err => console.log(`Consumer ${this.shortId}: error deleting processing queue: ${err}`))
-    }
+    this.get().then(data => {
+      return Promise.resolve(this.processMessages(data))
+    })
+  }
 
+  get () {
+    return axios.get(this.getUrl + this.shortId)
+      .then(res => {
+        return res.data
+      })
+      .catch(err => console.log(`Error getting message, url: ${this.getUrl + this.shortId} ${err}`))
+  }
+
+  deleteProcessingQueue () {
+    console.log('Send req to delete processing Queue')
+    this.processingMessage = false
+    return axios.post(this.deleteUrl + this.shortId)
+      .then(({data}) => {
+        return data.status
+      })
+      .catch(err => console.log(`Consumer ${this.shortId}: error deleting processing queue: ${err}`))
+  }
 }

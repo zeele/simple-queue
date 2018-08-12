@@ -1,61 +1,59 @@
-import { client } from './db'
 import Util from './util'
-import moment from 'moment'
+import { DbService } from './db'
 
 export class Cleanup {
+  constructor (dbService) {
+    this.processingQueues = new Map()
+    this.dbService = new DbService()
+  }
 
-    constructor(dbService) {
-        this.processingQueues = new Map();
-        this.dbService = dbService;
+  init () {
+    console.log('Initializing clean up tool...')
+    this.dbService.init()
+    setInterval(() => {
+      this.cleanUp()
+    }, 10000)
+  }
+
+  addToMapOfProcessingQs (name, expirationTime) {
+    console.log(`Adding ${name} to cleanup map`)
+    this.processingQueues.set(name, expirationTime)
+  }
+
+  deleteFromMapOfProcessingQs (name) {
+    console.log('Deleting from cleanup map')
+    this.processingQueues.delete(name)
+  }
+
+  cleanUp () {
+    console.log(`Beginning clean up...`)
+    let currTime = Util.generateTimestamp()
+    let processingQs = this.processingQueues
+
+    for (let [key, expireTime] of processingQs) {
+      if (expireTime < currTime) {
+        console.log(`key ${key} has expired`)
+        this.addMessagesToQueue(key, currTime)
+        this.deletePQueue(key)
+      } else {
+        break
+      }
     }
+  }
 
-    init() {
-        console.log('Initializing clean up tool...')
-        setInterval(() => {
-            this.cleanUp()
-        }, 10000)
-    }
+  addMessagesToQueue (key, currTime) {
+    console.log(`About to add messages from expired ${key} to queue`)
+    this.dbService.getMessagesFromList(key, (results) => {
+      for (let result of results) {
+        let msg = JSON.parse(result)
+        msg.timestamp = currTime
+        this.dbService.addToFrontOfQueue(JSON.stringify(msg))
+      }
+    })
+  }
 
-    addToMapOfProcessingQs(name, expirationTime) {
-        console.log('adding to cleanup map')
-        this.processingQueues.set(name, expirationTime)
-    }
-
-    deleteFromMapOfProcessingQs(name) {
-        console.log('deleting from cleanup map')
-        delete cleanup.processingQueues.delete(name)
-    }
-
-    cleanUp () {
-        let cont = true;
-        console.log(`Beginning clean up...`)
-        while (cont) {
-            let currTime = Util.generateTimestamp();
-            let processingQs = this.processingQueues;
-            console.log(`currTime ${currTime}`)
-
-            for (let [name, expireTime] of processingQs) {
-                console.log(`name ${name} currTime ${currTime} expireTime ${expireTime}`)
-                if (expireTime < currTime) {
-                    console.log(`name ${name} has expired`)
-                    let msg = {
-                        'id' : Util.generateUuid(),
-                        'text' : res.body,
-                        'timestamp' : Util.generateTimestamp()
-                    }
-
-                    this.dbService.addToQueue(JSON.stringify(msg))
-                    this.dbService.deleteProcessingQueue(`processingQueue:${key}`)
-                    this.processingQueues.delete(key);
-                } else {
-                    //since map is sorted by insertion the rest will have a later
-                    //expiration time
-                    cont = false;
-                }
-            }
-            cont = false;
-        }
-    }
-
-
+  deletePQueue (key) {
+    this.processingQueues.delete(key)
+    this.dbService.deleteProcessingQueue(key)
+  }
 }
