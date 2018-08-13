@@ -12,12 +12,15 @@ export class Consumer {
 
   init () {
     console.log('Initializing consumer...')
+    // Commenting this out to prevent overuse of CPU resources
+    // This below code could work if there's a feature like
+    // long polling
     // while (!this.processingMessage) {
-    //   console.log(this.processingMessage)
     //   this.getMessages()
     //   this.deleteProcessingQueue()
     // }
 
+    // todo: make interval configurable
     setInterval(() => {
       this.getMessages()
       this.deleteProcessingQueue()
@@ -50,6 +53,7 @@ export class Consumer {
   deleteProcessingQueue () {
     console.log('Send req to delete processing Queue')
     this.processingMessage = false
+
     return axios.post(this.deleteUrl + this.shortId)
       .then(({data}) => {
         return data.status

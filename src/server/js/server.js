@@ -28,14 +28,12 @@ app.post('/add', (req, res) => {
 
 app.post('/delete/:uuid', (req, res) => {
   const name = 'processingQueue:' + req.params.uuid
-  console.log(`Deleting ${name}`)
   dbService.deleteProcessingQueue(name)
   cleanup.deleteFromMapOfProcessingQs(name)
 })
 
 app.get('/get/:uuid', (req, res) => {
   console.log('Received request from consumer for messages')
-
   let name = `processingQueue:${req.params.uuid}`
 
   dbService.moveQToProcessingQueue('queue', name)
