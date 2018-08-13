@@ -33,23 +33,26 @@ npm install && npm run start
 
 - When a processing queue is deleted, it's consumer's id is also deleted from the clean up service's map.
 
-- The cleanup service runs a **cleanup job** at a **set interval**. This job will go through the map of consumer ids, starting from the beginning (oldest) and checking the expiration time. If the expiration time has passed, it will get the messages from the consumer's processing queue, **move it to the front of the main queue**, and delete the processing queue. This service runs until it finds an item that has not expired (as everything after will be newer)
+- The cleanup service runs a **cleanup job** at a **set interval**. This job will go through the map of consumer ids, starting from the beginning (oldest) and checking the expiration time. If the expiration time has passed, it will get the messages from the consumer's processing queue, **move it to the front of the main queue**, and deletes the processing queue. This service runs until it finds an item that has not expired (as everything after will be newer)
 
 ## API endpoints
-####`POST /add`
+`POST /add`
 
 Adds a message to the queue
 
 Parameters:
 - `text=[string]`
 
-####`POST /delete/:uuid`
+`POST /delete/:uuid`
+
 Deletes a  queue 
 
 Parameters:
 - `uuid`
 
-####`GET /get/:uuid`
+
+`GET /get/:uuid`
+
 Gets messages from a queue
 Parameters:
 - `uuid`
