@@ -13,7 +13,7 @@ export class Producer {
   }
 
   addMessage (text = 'foo') {
-    return axios.post(this.url, text)
+    axios.post(this.url, text)
       .catch(err => console.log(`Producer: error adding message ${err}`))
   }
 }

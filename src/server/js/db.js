@@ -18,8 +18,8 @@ export class DbService {
   }
 
   addToQueue (msg) {
-    this.client.lpush('queue', msg)
-    return msg.id
+    this.client.lpush('queue', JSON.stringify(msg))
+    return Promise.resolve(msg.id)
   }
 
   addToFrontOfQueue (msg) {

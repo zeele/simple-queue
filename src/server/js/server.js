@@ -23,7 +23,9 @@ app.post('/add', (req, res) => {
     'timestamp': Util.generateTimestamp()
   }
 
-  return dbService.addToQueue(JSON.stringify(msg))
+  dbService.addToQueue(msg).then(id =>  {
+    res.send(id)
+  })
 })
 
 app.post('/delete/:uuid', (req, res) => {
