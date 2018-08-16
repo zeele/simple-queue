@@ -17,9 +17,9 @@ export class DbService {
     })
   }
 
-  addToQueue (msg) {
-    this.client.lpush('queue', JSON.stringify(msg))
-    return Promise.resolve(msg.id)
+  async addToQueue (msg) {
+    await this.client.lpush('queue', JSON.stringify(msg))
+    return msg.id
   }
 
   addToFrontOfQueue (msg) {
