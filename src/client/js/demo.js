@@ -3,12 +3,13 @@ import { Consumer } from './Consumer'
 
 const consumerConfig = {
   getUrl: 'http://localhost:3000/get/',
-  deleteUrl: 'http://localhost:3000/delete/'
+  deleteUrl: 'http://localhost:3000/delete/',
+  interval: 8000
 }
 
 const producerConfig = {
   url: 'http://localhost:3000/add',
-  interval: 1000
+  interval: 8000
 }
 
 const producer = new Producer(producerConfig)

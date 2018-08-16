@@ -12,7 +12,7 @@ export class Cleanup {
     this.dbService.init()
     setInterval(() => {
       this.cleanUp()
-    }, 10000)
+    }, 30000)
   }
 
   addToMapOfProcessingQs (name, expirationTime) {

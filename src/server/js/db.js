@@ -37,14 +37,18 @@ export class DbService {
     this.client.rename(src, dest)
   }
 
-  getMessagesFromList (name, fn) {
+  getMessagesFromList (name) {
     console.log(`Retrieving messages from ${name}`)
-    this.client.lrange(name, 0, -1, (err, result) => {
-      if (err) {
-        console.log('Error getting values from list')
-      } else {
-        fn(result)
-      }
+    return new Promise((resolve, reject) => {
+      this.client.lrange(name, 0, -1, (err, result) => {
+        if (err) {
+          console.log('Error getting values from list')
+          reject(err)
+        } else {
+          console.log('Messages retreived from list successfully')
+          resolve(result)
+        }
+      })
     })
   }
 }

@@ -3,11 +3,12 @@ import Util from './util'
 
 export class Consumer {
   constructor (config = {}) {
-    const {getUrl, deleteUrl} = config
+    const {getUrl, deleteUrl, interval} = config
     this.getUrl = getUrl
     this.deleteUrl = deleteUrl
     this.shortId = ''
     this.processingMessage = false
+    this.interval = interval
   }
 
   init () {
@@ -20,15 +21,15 @@ export class Consumer {
     //   this.deleteProcessingQueue()
     // }
 
-    // todo: make interval configurable
     setInterval(() => {
       this.getMessages()
-      this.deleteProcessingQueue()
-    }, 5000)
+     // this.deleteProcessingQueue()
+    }, this.interval)
   }
 
   processMessages (data) {
-    console.log(`Message processing`)
+    console.log(`Consumer ${this.shortId} Processing data`)
+    console.log(`Consumer ${this.shortId} Finished processing messages`)
     return data
   }
 
@@ -44,14 +45,12 @@ export class Consumer {
 
   get () {
     return axios.get(this.getUrl + this.shortId)
-      .then(res => {
-        return res.data
-      })
+      .then(res => res.data)
       .catch(err => console.log(`Error getting message, url: ${this.getUrl + this.shortId} ${err}`))
   }
 
   deleteProcessingQueue () {
-    console.log('Send req to delete processing Queue')
+    console.log(`Send request to delete processing Queue ${this.shortId}`)
     this.processingMessage = false
 
     return axios.post(this.deleteUrl + this.shortId)

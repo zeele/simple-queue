@@ -23,9 +23,7 @@ app.post('/add', (req, res) => {
     'timestamp': Util.generateTimestamp()
   }
 
-  dbService.addToQueue(msg).then(id =>  {
-    res.send(id)
-  })
+  dbService.addToQueue(msg).then(id => res.send(id))
 })
 
 app.post('/delete/:uuid', (req, res) => {
@@ -40,7 +38,5 @@ app.get('/get/:uuid', (req, res) => {
 
   dbService.moveQToProcessingQueue('queue', name)
   cleanup.addToMapOfProcessingQs(name, Util.generateExpTime())
-  dbService.getMessagesFromList(name, (result) => {
-    res.send(result)
-  })
+  dbService.getMessagesFromList(name).then(result => res.send(result))
 })

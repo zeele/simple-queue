@@ -14,6 +14,7 @@ export class Producer {
 
   addMessage (text = 'foo') {
     axios.post(this.url, text)
+      .then((res) => console.log(`Server indicated ${res.data} was added successfully`))
       .catch(err => console.log(`Producer: error adding message ${err}`))
   }
 }
